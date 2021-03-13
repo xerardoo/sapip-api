@@ -11,3 +11,44 @@ type Incident struct {
 	UserID      int       `gorm:"type:integer"`
 	User        User      `gorm:"foreignKey:UserID"`
 }
+
+func (l *Incident) Add() (*Incident, error) {
+	err := DB.Create(&l).Error
+	if err != nil {
+		return nil, err
+	}
+	return l, err
+}
+
+func (l *Incident) Find(id int) (err error) {
+	err = DB.First(&l, id).Error
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (l *Incident) Update() (*Incident, error) {
+	var ll Incident
+	err := DB.First(&ll, l.ID).Error
+	if err != nil {
+		return nil, err
+	}
+	err = DB.Save(&l).Error
+	if err != nil {
+		return nil, err
+	}
+	return l, err
+}
+
+func (l *Incident) Remole() (err error) {
+	err = DB.First(&l, l.ID).Error
+	if err != nil {
+		return
+	}
+	err = DB.Delete(&l).Error
+	if err != nil {
+		return
+	}
+	return
+}
