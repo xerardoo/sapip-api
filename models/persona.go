@@ -2,11 +2,11 @@ package models
 
 type Persona struct {
 	Model
-	FirstName  string    `gorm:"size:250;not null;" sql:"index"`
-	LastName   string    `gorm:"size:250;not null;" sql:"index"`
-	Type       string    `gorm:"size:250;not null;" sql:"index"`
-	IdentityID int       `gorm:"type:integer"`
-	Identities []Persona `gorm:"foreignkey:IdentityID"`
+	FirstName  string    `gorm:"size:250;not null;" sql:"index" json:"first_name"`
+	LastName   string    `gorm:"size:250;not null;" sql:"index" json:"last_name"`
+	Type       string    `gorm:"size:250;not null;" sql:"index" json:"type"`
+	IdentityID int       `gorm:"type:integer" json:"identity_id"`
+	Identities []Persona `gorm:"foreignkey:IdentityID" json:"identities"`
 	// Vehicles   []Vehicle  `gorm:"many2many:persona_vehicles;"`
 	// Locations  []Location `gorm:"many2many:persona_locations;"`
 }

@@ -2,10 +2,10 @@ package models
 
 type Location struct {
 	Model
-	Latitude  string `gorm:"size:32"`
-	Longitude string `gorm:"size:32"`
-	TimeStamp string `gorm:"size:36"`
-	Accuracy  string `gorm:"size:36"`
+	Latitude  string `gorm:"size:32" json:"latitude"`
+	Longitude string `gorm:"size:32" json:"longitude"`
+	TimeStamp string `gorm:"size:36" json:"timestamp"`
+	Accuracy  string `gorm:"size:36" json:"accuracy"`
 }
 
 func (l *Location) Add() (*Location, error) {

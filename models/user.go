@@ -1,22 +1,19 @@
 package models
 
 import (
-	"database/sql"
 	"time"
 )
 
 type User struct {
 	Model
-	FirstName   string `gorm:"size:250;not null;" sql:"index"`
-	LastName    string `gorm:"size:250;not null;" sql:"index"`
-	Password    string `gorm:"size:250;not null;" sql:"index"`
-	Rank        string `gorm:"size:250;not null;" sql:"index"`
-	PhoneNumber string `gorm:"size:250;not null;" sql:"index"`
-	Email       string `gorm:"size:250;"`
+	FirstName   string `gorm:"size:250;not null;" sql:"index" json:"first_name"`
+	LastName    string `gorm:"size:250;not null;" sql:"index" json:"last_name"`
+	Password    string `gorm:"size:250;not null;" sql:"index" json:"-"`
+	Rank        string `gorm:"size:250;not null;" sql:"index" json:"rank"`
+	PhoneNumber string `gorm:"size:250;not null;" sql:"index" json:"phone_number"`
+	Email       string `gorm:"size:250;" json:"email"`
 	Birthday    time.Time
-	ActivatedAt sql.NullTime
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ActivatedAt time.Time
 }
 
 func (u *User) Add() (*User, error) {
@@ -41,7 +38,7 @@ func (u *User) Update() (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = DB.Saue(&u).Error
+	err = DB.Save(&u).Error
 	if err != nil {
 		return nil, err
 	}

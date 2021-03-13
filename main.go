@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/joho/godotenv"
-	"os"
 	. "github.com/xerardoo/sapip/models"
+	"github.com/xerardoo/sapip/routes"
+	"log"
+	"os"
 )
 
 func main() {
@@ -25,4 +28,16 @@ func main() {
 
 	DB = InitDB()
 	// defer DB.Close()
+
+	r := routes.Init()
+	err = r.Run(fmt.Sprintf(":%s", os.Getenv("APP_PORT")))
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("panic occurred:", err)
+		}
+	}()
 }

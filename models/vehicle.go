@@ -2,14 +2,14 @@ package models
 
 type Vehicle struct {
 	Model
-	VIN        string `gorm:"size:250;not null;" sql:"index"`
-	Type       string `gorm:"size:250;not null;" sql:"index"`
-	Brand      string `gorm:"size:250;not null;" sql:"index"`
-	Modelo     string `gorm:"size:250;not null;" sql:"index"`
-	Year       string `gorm:"size:250;not null;" sql:"index"`
-	Color      string `gorm:"size:250;not null;" sql:"index"`
-	Plate      string `gorm:"size:50; not null;" sql:"index"`
-	PlateState string `gorm:"size:50; not null;" sql:"index"`
+	VIN        string `gorm:"size:250;not null;" sql:"index" json:"vin"`
+	Type       string `gorm:"size:250;not null;" sql:"index" json:"type"`
+	Brand      string `gorm:"size:250;not null;" sql:"index" json:"brand"`
+	Modelo     string `gorm:"size:250;not null;" sql:"index" json:"modelo"`
+	Year       string `gorm:"size:250;not null;" sql:"index" json:"year"`
+	Color      string `gorm:"size:250;not null;" sql:"index" json:"color"`
+	Plate      string `gorm:"size:50; not null;" sql:"index" json:"plate"`
+	PlateState string `gorm:"size:50; not null;" sql:"index" json:"plate_state"`
 }
 
 func (v *Vehicle) Add() (*Vehicle, error) {

@@ -2,14 +2,14 @@ package models
 
 type Incident struct {
 	Model
-	Description string    `gorm:"index:,class:FULLTEXT"` // full index
-	Type        string    `gorm:"size:250;not null;" sql:"index"`
-	Personas    []Persona `gorm:"many2many:incident_personas;"`
-	Vehicles    []Vehicle `gorm:"many2many:incident_vehicles;"`
-	LocationID  int       `gorm:"type:integer"`
-	Location    Location  `gorm:"foreignKey:LocationID"`
-	UserID      int       `gorm:"type:integer"`
-	User        User      `gorm:"foreignKey:UserID"`
+	Description string    `gorm:"index:,class:FULLTEXT" json:"description"` // full index
+	Type        string    `gorm:"size:250;not null;" sql:"index" json:"type"`
+	Personas    []Persona `gorm:"many2many:incident_personas;" json:"personas"`
+	Vehicles    []Vehicle `gorm:"many2many:incident_vehicles;" json:"vehicles"`
+	LocationID  int       `gorm:"type:integer" json:"location_id"`
+	Location    Location  `gorm:"foreignKey:LocationID" json:"location"`
+	UserID      int       `gorm:"type:integer" json:"user_id"`
+	User        User      `gorm:"foreignKey:UserID" json:"user"`
 }
 
 func (l *Incident) Add() (*Incident, error) {
@@ -41,12 +41,27 @@ func (l *Incident) Update() (*Incident, error) {
 	return l, err
 }
 
-func (l *Incident) Remole() (err error) {
+func (l *Incident) Remove() (err error) {
 	err = DB.First(&l, l.ID).Error
 	if err != nil {
 		return
 	}
 	err = DB.Delete(&l).Error
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (l *Incident) GetLocation() (location Location, err error) {
+	err = DB.Model(&l).Association("Location").Find(&location)
+	if err != nil {
+		return
+	}
+	return
+}
+func (l *Incident) GetUser() (user User, err error) {
+	err = DB.Model(&l).Association("User").Find(&user)
 	if err != nil {
 		return
 	}
