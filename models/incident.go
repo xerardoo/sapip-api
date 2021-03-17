@@ -7,9 +7,9 @@ type Incident struct {
 	Personas    []Persona `gorm:"many2many:incident_personas;" json:"personas"`
 	Vehicles    []Vehicle `gorm:"many2many:incident_vehicles;" json:"vehicles"`
 	LocationID  int       `gorm:"type:integer" json:"location_id"`
-	Location    Location  `gorm:"foreignKey:LocationID" json:"location"`
+	Location    Location  `gorm:"foreignkey:LocationID;" json:"location"`
 	UserID      int       `gorm:"type:integer" json:"user_id"`
-	User        User      `gorm:"foreignKey:UserID" json:"user"`
+	User        User      `gorm:"foreignkey:UserID;" json:"user"`
 }
 
 func (l *Incident) Add() (*Incident, error) {

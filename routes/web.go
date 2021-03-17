@@ -6,6 +6,7 @@ import (
 )
 
 func Init() *gin.Engine {
+	// gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 

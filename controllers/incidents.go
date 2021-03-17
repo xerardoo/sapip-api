@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	m "github.com/xerardoo/sapip/models"
 	"gorm.io/gorm"
@@ -19,10 +18,9 @@ func AllIncidents(c *gin.Context) {
 	var incidents []m.Incident
 	var count int64
 	// db = db.Where("name LIKE ?", name+"%")
-	db.Scopes(m.Pagination(page, limit)).Find(&incidents)
+	db.Scopes(m.Pagination(page, limit)).Order("id desc").Find(&incidents)
 	db.Model(m.Incident{}).Count(&count)
 	paginator := m.Paginator{
-		Records:     incidents,
 		Limit:       limit,
 		Page:        page,
 		TotalRecord: count,
@@ -33,8 +31,6 @@ func AllIncidents(c *gin.Context) {
 			c.JSON(500, gin.H{"msg": err.Error()})
 			return
 		}
-		fmt.Println("hola")
-		fmt.Println(incident)
 		user, err := incident.GetUser()
 		if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
 			c.JSON(500, gin.H{"msg": err.Error()})
@@ -43,7 +39,7 @@ func AllIncidents(c *gin.Context) {
 		incidents[i].Location = location
 		incidents[i].User = user
 	}
-
+	paginator.Records = incidents
 	c.JSON(200, paginator)
 }
 
@@ -55,6 +51,19 @@ func FindIncident(c *gin.Context) {
 		c.JSON(500, gin.H{"msg": err.Error()})
 		return
 	}
+
+	location, err := incident.GetLocation()
+	if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
+	user, err := incident.GetUser()
+	if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
+	incident.Location = location
+	incident.User = user
 	c.JSON(200, incident)
 }
 
