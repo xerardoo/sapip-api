@@ -2,14 +2,19 @@ package models
 
 type Incident struct {
 	Model
-	Description string    `gorm:"index:,class:FULLTEXT" json:"description"` // full index
-	Type        string    `gorm:"size:250;not null;" sql:"index" json:"type"`
-	Personas    []Persona `gorm:"many2many:incident_personas;" json:"personas"`
-	Vehicles    []Vehicle `gorm:"many2many:incident_vehicles;" json:"vehicles"`
-	LocationID  int       `gorm:"type:integer" json:"location_id"`
-	Location    Location  `gorm:"foreignkey:LocationID;" json:"location"`
-	UserID      int       `gorm:"type:integer" json:"user_id"`
-	User        User      `gorm:"foreignkey:UserID;" json:"user"`
+	Description string `gorm:"index:,class:FULLTEXT" json:"description"` // full index narrativa
+	Type        string `gorm:"size:250;not null;" sql:"index" json:"type"`
+	Date        string `gorm:"size:250;not null;" sql:"index" json:"date"`
+	Address     string `gorm:"size:250;not null;" sql:"index" json:"address"`
+	// tipo de evento  homicidio, persona lesionada, robo con violencia a comercio, robo con violencia a persona, robo a casa habitacion, allanamiento, rina en via publica, violencia intrafamniliar,
+	Personas   []Persona `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
+	Vehicles   []Vehicle `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
+	Patrols    []Patrol  `gorm:"many2many:incident_patrols;" json:"patrols"`
+	LocationID int       `gorm:"type:integer" json:"location_id"`
+	Location   Location  `gorm:"foreignkey:LocationID;" json:"location"`
+	UserID     int       `gorm:"type:integer" json:"user_id"`
+	User       User      `gorm:"foreignkey:UserID;" json:"user"`
+	// fotos del incidente
 }
 
 func (l *Incident) Add() (*Incident, error) {

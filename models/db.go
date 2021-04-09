@@ -46,12 +46,14 @@ func InitDB() (db *gorm.DB) {
 	// }
 	err = db.AutoMigrate(
 		&User{},
+		&Patrol{},
 		&Persona{},
 		&Vehicle{},
 		&Location{},
 		&Incident{},
 	)
 	if err != nil {
+		fmt.Println("DB Migration: ", err.Error())
 		panic("DB Migration: " + err.Error())
 	}
 

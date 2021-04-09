@@ -1,14 +1,21 @@
 package models
 
+import "time"
+
 type Persona struct {
 	Model
 	FirstName  string    `gorm:"size:250;not null;" sql:"index" json:"first_name"`
 	LastName   string    `gorm:"size:250;not null;" sql:"index" json:"last_name"`
+	BirthDate  time.Time `json:"birth_date"`
+	Hometown   string    `gorm:"size:250;not null;" json:"hometown"` // originario
+	Occupation string    `gorm:"size:250;not null;" json:"occupation"`
+	// edad
 	Type       string    `gorm:"size:250;not null;" sql:"index" json:"type"`
-	IdentityID int       `gorm:"type:integer" json:"identity_id"`
+	IdentityID int       `gorm:"type:integer" json:"identity_id"` // victima, reportante, fallecido, lesionado, persona responsable
 	Identities []Persona `gorm:"foreignkey:IdentityID" json:"identities"`
 	// Vehicles   []Vehicle  `gorm:"many2many:persona_vehicles;"`
 	// Locations  []Location `gorm:"many2many:persona_locations;"`
+	// foto de frente
 }
 
 func (p *Persona) Add() (*Persona, error) {

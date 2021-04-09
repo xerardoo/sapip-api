@@ -2,14 +2,16 @@ package models
 
 type Vehicle struct {
 	Model
+	// Marca, linea, modelo, color, placas de circulacion, serie,
 	VIN        string `gorm:"size:250;not null;" sql:"index" json:"vin"`
-	Type       string `gorm:"size:250;not null;" sql:"index" json:"type"`
+	Type       string `gorm:"size:250;not null;" sql:"index" json:"type"` // responsable, afectado
 	Brand      string `gorm:"size:250;not null;" sql:"index" json:"brand"`
 	Modelo     string `gorm:"size:250;not null;" sql:"index" json:"modelo"`
 	Year       string `gorm:"size:250;not null;" sql:"index" json:"year"`
 	Color      string `gorm:"size:250;not null;" sql:"index" json:"color"`
 	Plate      string `gorm:"size:50; not null;" sql:"index" json:"plate"`
 	PlateState string `gorm:"size:50; not null;" sql:"index" json:"plate_state"`
+	// Fotos
 }
 
 func (v *Vehicle) Add() (*Vehicle, error) {
