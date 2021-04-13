@@ -57,6 +57,7 @@ func InitDB() (db *gorm.DB) {
 		panic("DB Migration: " + err.Error())
 	}
 
+	InitIncidents(db)
 	return
 }
 

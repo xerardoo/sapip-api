@@ -22,6 +22,12 @@ func Init() *gin.Engine {
 	// 	})
 	// }
 
+	data := r.Group("/v1/data")
+	{
+		data.POST("/geocodingr", controllers.GetGeocodingReverse)
+		data.GET("/incident-types", controllers.AllIncidentTypes)
+	}
+
 	incident := r.Group("/v1/incident")
 	{
 		incident.GET("", controllers.AllIncidents)

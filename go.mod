@@ -19,6 +19,7 @@ require (
 	golang.org/x/sys v0.0.0-20210316164454-77fc1eacc6aa // indirect
 	golang.org/x/text v0.3.5 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
+	googlemaps.github.io/maps v1.3.2
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/driver/mysql v1.0.4
 	gorm.io/gorm v1.21.3

@@ -1,20 +1,38 @@
 package models
 
+import "gorm.io/gorm"
+
 type Incident struct {
 	Model
-	Description string `gorm:"index:,class:FULLTEXT" json:"description"` // full index narrativa
-	Type        string `gorm:"size:250;not null;" sql:"index" json:"type"`
-	Date        string `gorm:"size:250;not null;" sql:"index" json:"date"`
-	Address     string `gorm:"size:250;not null;" sql:"index" json:"address"`
-	// tipo de evento  homicidio, persona lesionada, robo con violencia a comercio, robo con violencia a persona, robo a casa habitacion, allanamiento, rina en via publica, violencia intrafamniliar,
-	Personas   []Persona `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
-	Vehicles   []Vehicle `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
-	Patrols    []Patrol  `gorm:"many2many:incident_patrols;" json:"patrols"`
-	LocationID int       `gorm:"type:integer" json:"location_id"`
-	Location   Location  `gorm:"foreignkey:LocationID;" json:"location"`
-	UserID     int       `gorm:"type:integer" json:"user_id"`
-	User       User      `gorm:"foreignkey:UserID;" json:"user"`
+	Description string       `gorm:"index:,class:FULLTEXT" json:"description"` // full index narrativa
+	Date        string       `gorm:"size:250;not null;" sql:"index" json:"date"`
+	Address     string       `gorm:"size:250;not null;" sql:"index" json:"address"`
+	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
+	TypeID      int          `gorm:"type:integer" json:"type_id"`
+	Personas    []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
+	Vehicles    []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
+	Patrols     []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
+	LocationID  int          `gorm:"type:integer" json:"location_id"`
+	Location    Location     `gorm:"foreignkey:LocationID;" json:"location"`
+	UserID      int          `gorm:"type:integer" json:"user_id"`
+	User        User         `gorm:"foreignkey:UserID;" json:"user"`
 	// fotos del incidente
+}
+
+type IncidentType struct {
+	Model
+	Name string `gorm:"size:250;not null;" sql:"index" json:"name"`
+}
+
+// tipo de evento  homicidio, persona lesionada, robo con violencia a comercio, robo con violencia a persona,
+// robo a casa habitacion, allanamiento, rina en via publica, violencia intrafamniliar,
+func InitIncidents(db *gorm.DB) {
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 1}, Name: "Allamiento"})
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 2}, Name: "Robo de Vehiculo"})
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 3}, Name: "Robo a Casa Habitacion"})
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 4}, Name: "Robo con Violencia a Comercio"})
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 5}, Name: "Homicidio"})
+	db.FirstOrCreate(&IncidentType{Model: Model{ID: 6}, Name: "Violencia Intrafamiliar"})
 }
 
 func (l *Incident) Add() (*Incident, error) {
