@@ -30,9 +30,14 @@ func GetGeocodingReverse(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-
 func AllIncidentTypes(c *gin.Context) {
 	var incidents []m.IncidentType
 	m.DB.Order("name desc").Find(&incidents)
 	c.JSON(200, incidents)
+}
+
+func AllPersonaTypes(c *gin.Context) {
+	var personas []m.PersonaType
+	m.DB.Order("name desc").Find(&personas)
+	c.JSON(200, personas)
 }

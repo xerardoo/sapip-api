@@ -1,21 +1,38 @@
 package models
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Persona struct {
 	Model
-	FirstName  string    `gorm:"size:250;not null;" sql:"index" json:"first_name"`
-	LastName   string    `gorm:"size:250;not null;" sql:"index" json:"last_name"`
-	BirthDate  time.Time `json:"birth_date"`
-	Hometown   string    `gorm:"size:250;not null;" json:"hometown"` // originario
-	Occupation string    `gorm:"size:250;not null;" json:"occupation"`
-	// edad
-	Type       string    `gorm:"size:250;not null;" sql:"index" json:"type"`
-	IdentityID int       `gorm:"type:integer" json:"identity_id"` // victima, reportante, fallecido, lesionado, persona responsable
-	Identities []Persona `gorm:"foreignkey:IdentityID" json:"identities"`
+	FirstName  string      `gorm:"size:250;not null;" sql:"index" json:"first_name"`
+	LastName   string      `gorm:"size:250;not null;" sql:"index" json:"last_name"`
+	BirthDate  time.Time   `json:"birth_date"`
+	Hometown   string      `gorm:"size:250;not null;" json:"hometown"`
+	Occupation string      `gorm:"size:250;not null;" json:"occupation"`
+	Type       PersonaType `gorm:"foreignkey:TypeID;" json:"type"`
+	TypeID     int         `gorm:"type:integer" json:"type_id"`
+	IdentityID int         `gorm:"type:integer" json:"identity_id"`
+	Identities []Persona   `gorm:"foreignkey:IdentityID" json:"identities"`
 	// Vehicles   []Vehicle  `gorm:"many2many:persona_vehicles;"`
 	// Locations  []Location `gorm:"many2many:persona_locations;"`
 	// foto de frente
+}
+
+type PersonaType struct {
+	Model
+	Name string `gorm:"size:250;not null;" sql:"index" json:"name"`
+}
+
+// victima, reportante, fallecido, lesionado, persona responsable
+func InitPersona(db *gorm.DB) {
+	db.FirstOrCreate(&PersonaType{Model: Model{ID: 1}, Name: "Victima"})
+	db.FirstOrCreate(&PersonaType{Model: Model{ID: 2}, Name: "Reportante"})
+	db.FirstOrCreate(&PersonaType{Model: Model{ID: 3}, Name: "Lesionado"})
+	db.FirstOrCreate(&PersonaType{Model: Model{ID: 4}, Name: "Responsable"})
+	db.FirstOrCreate(&PersonaType{Model: Model{ID: 5}, Name: "Fallecido"})
 }
 
 func (p *Persona) Add() (*Persona, error) {
@@ -47,7 +64,7 @@ func (p *Persona) Update() (*Persona, error) {
 	return p, err
 }
 
-func (p *Persona) Remole() (err error) {
+func (p *Persona) Remove() (err error) {
 	err = DB.First(&p, p.ID).Error
 	if err != nil {
 		return
