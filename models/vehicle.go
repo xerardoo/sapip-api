@@ -3,14 +3,17 @@ package models
 type Vehicle struct {
 	Model
 	// Marca, linea, modelo, color, placas de circulacion, serie,
-	VIN        string `gorm:"size:250;not null;" sql:"index" json:"vin"`
-	Type       string `gorm:"size:250;not null;" sql:"index" json:"type"` // responsable, afectado
-	Brand      string `gorm:"size:250;not null;" sql:"index" json:"brand"`
-	Modelo     string `gorm:"size:250;not null;" sql:"index" json:"modelo"`
-	Year       string `gorm:"size:250;not null;" sql:"index" json:"year"`
-	Color      string `gorm:"size:250;not null;" sql:"index" json:"color"`
-	Plate      string `gorm:"size:50; not null;" sql:"index" json:"plate"`
-	PlateState string `gorm:"size:50; not null;" sql:"index" json:"plate_state"`
+	VIN          string `gorm:"size:250;not null;" sql:"index" json:"vin"`
+	Type         string `gorm:"size:250;not null;" sql:"index" json:"type"` // responsable, afectado
+	Brand        string `gorm:"size:250;not null;" sql:"index" json:"brand"`
+	SubBrand     string `gorm:"size:250;not null;" sql:"index" json:"subbrand"`
+	Modelo       string `gorm:"size:250;not null;" sql:"index" json:"modelo"`
+	Color        string `gorm:"size:250;not null;" sql:"index" json:"color"`
+	Plate        string `gorm:"size:50; not null;" sql:"index" json:"plate"`
+	PlateState   string `gorm:"size:50; not null;" sql:"index" json:"plate_state"`
+	Origin       string `gorm:"size:25; not null;" sql:"index" json:"origin"`
+	UseType      string `gorm:"size:25; not null;" sql:"index" json:"use_type"`
+	Observations string `gorm:"size:300; not null;" json:"observations"`
 	// Fotos
 }
 

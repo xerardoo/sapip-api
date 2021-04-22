@@ -2,20 +2,23 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 type Persona struct {
 	Model
-	FirstName  string      `gorm:"size:250;not null;" sql:"index" json:"first_name"`
-	LastName   string      `gorm:"size:250;not null;" sql:"index" json:"last_name"`
-	BirthDate  time.Time   `json:"birth_date"`
-	Hometown   string      `gorm:"size:250;not null;" json:"hometown"`
-	Occupation string      `gorm:"size:250;not null;" json:"occupation"`
-	Type       PersonaType `gorm:"foreignkey:TypeID;" json:"type"`
-	TypeID     int         `gorm:"type:integer" json:"type_id"`
-	IdentityID int         `gorm:"type:integer" json:"identity_id"`
-	Identities []Persona   `gorm:"foreignkey:IdentityID" json:"identities"`
+	FirstName   string      `gorm:"size:250;not null;" sql:"index" json:"first_name"`
+	MiddleName  string      `gorm:"size:250;not null;" sql:"index" json:"middle_name"`
+	LastName    string      `gorm:"size:250;" sql:"index" json:"last_name"`
+	Alias       string      `gorm:"size:250;" sql:"index" json:"alias"`
+	Sex         string      `gorm:"size:6;not null;" sql:"index" json:"sex"`
+	Nationality string      `gorm:"size:6;" sql:"index" json:"nationality"`
+	BirthDate   string      `gorm:"size:25;not null;" json:"birth_date"`
+	Hometown    string      `gorm:"size:250;not null;" json:"hometown"`
+	Occupation  string      `gorm:"size:250;not null;" json:"occupation"`
+	Type        PersonaType `gorm:"foreignkey:TypeID;" json:"type"`
+	TypeID      int         `gorm:"type:integer" json:"type_id"`
+	// IdentityID  int         `gorm:"type:integer" json:"identity_id"`
+	// Identities  []Persona   `gorm:"foreignkey:IdentityID" json:"identities"`
 	// Vehicles   []Vehicle  `gorm:"many2many:persona_vehicles;"`
 	// Locations  []Location `gorm:"many2many:persona_locations;"`
 	// foto de frente

@@ -31,13 +31,13 @@ func AllIncidents(c *gin.Context) {
 			c.JSON(500, gin.H{"msg": err.Error()})
 			return
 		}
-		user, err := incident.GetUser()
-		if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
-			c.JSON(500, gin.H{"msg": err.Error()})
-			return
-		}
+		// user, err := incident.GetUser()
+		// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+		// 	c.JSON(500, gin.H{"msg": err.Error()})
+		// 	return
+		// }
 		incidents[i].Location = location
-		incidents[i].User = user
+		// incidents[i].User = user
 	}
 	paginator.Records = incidents
 	c.JSON(200, paginator)
@@ -57,13 +57,13 @@ func FindIncident(c *gin.Context) {
 		c.JSON(500, gin.H{"msg": err.Error()})
 		return
 	}
-	user, err := incident.GetUser()
-	if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
-		c.JSON(500, gin.H{"msg": err.Error()})
-		return
-	}
+	// user, err := incident.GetUser()
+	// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+	// 	c.JSON(500, gin.H{"msg": err.Error()})
+	// 	return
+	// }
 	incident.Location = location
-	incident.User = user
+	// incident.User = user
 	c.JSON(200, incident)
 }
 

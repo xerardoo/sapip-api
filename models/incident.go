@@ -1,21 +1,25 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Incident struct {
 	Model
-	Description string       `gorm:"index:,class:FULLTEXT" json:"description"` // full index narrativa
-	Date        string       `gorm:"size:250;not null;" sql:"index" json:"date"`
-	Address     string       `gorm:"size:250;not null;" sql:"index" json:"address"`
-	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
+	Date        string       `gorm:"size:25;not null;" sql:"index" json:"date"`
+	Description string       `gorm:"size:500;index:,class:FULLTEXT" json:"description"` // full index narrativa
+	Address     string       `gorm:"size:400;not null;" sql:"index" json:"address"`
+	Area        string       `gorm:"size:25;not null;" sql:"index" json:"area"`
+	ZipCode     string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
+	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"-"`
 	TypeID      int          `gorm:"type:integer" json:"type_id"`
 	Personas    []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
 	Vehicles    []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
 	Patrols     []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
 	LocationID  int          `gorm:"type:integer" json:"location_id"`
 	Location    Location     `gorm:"foreignkey:LocationID;" json:"location"`
-	UserID      int          `gorm:"type:integer" json:"user_id"`
-	User        User         `gorm:"foreignkey:UserID;" json:"user"`
+	// UserID      int          `gorm:"type:integer" json:"user_id"`
+	// User        User         `gorm:"foreignkey:UserID;" json:"user"`
 	// fotos del incidente
 }
 
