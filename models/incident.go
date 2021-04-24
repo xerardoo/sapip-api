@@ -11,7 +11,7 @@ type Incident struct {
 	Address     string       `gorm:"size:400;not null;" sql:"index" json:"address"`
 	Area        string       `gorm:"size:25;not null;" sql:"index" json:"area"`
 	ZipCode     string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
-	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"-"`
+	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
 	TypeID      int          `gorm:"type:integer" json:"type_id"`
 	Personas    []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
 	Vehicles    []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
@@ -48,7 +48,8 @@ func (l *Incident) Add() (*Incident, error) {
 }
 
 func (l *Incident) Find(id int) (err error) {
-	err = DB.First(&l, id).Error
+	err = DB.Preload("Location").Preload("Type").
+		Preload("Personas.Type").Preload("Vehicles").First(&l, id).Error
 	if err != nil {
 		return
 	}

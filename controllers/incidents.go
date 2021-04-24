@@ -52,17 +52,17 @@ func FindIncident(c *gin.Context) {
 		return
 	}
 
-	location, err := incident.GetLocation()
-	if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
-		c.JSON(500, gin.H{"msg": err.Error()})
-		return
-	}
+	// location, err := incident.GetLocation()
+	// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+	// 	c.JSON(500, gin.H{"msg": err.Error()})
+	// 	return
+	// }
 	// user, err := incident.GetUser()
 	// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
 	// 	c.JSON(500, gin.H{"msg": err.Error()})
 	// 	return
 	// }
-	incident.Location = location
+	// incident.Location = location
 	// incident.User = user
 	c.JSON(200, incident)
 }
