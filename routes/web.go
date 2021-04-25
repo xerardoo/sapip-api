@@ -38,5 +38,11 @@ func Init() *gin.Engine {
 		// incident.DELETE("/:id", controllers.DelIncident)
 	}
 
+	incidentAdmin := r.Group("/v1/admin/incident")
+	{
+		incidentAdmin.GET("", controllers.AllIncidents)
+		incidentAdmin.GET("/:id", controllers.FindIncident)
+	}
+
 	return r
 }

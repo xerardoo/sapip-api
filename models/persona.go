@@ -21,7 +21,7 @@ type Persona struct {
 	// Identities  []Persona   `gorm:"foreignkey:IdentityID" json:"identities"`
 	// Vehicles   []Vehicle  `gorm:"many2many:persona_vehicles;"`
 	// Locations  []Location `gorm:"many2many:persona_locations;"`
-	// foto de frente
+	PhotoFront string `gorm:"size:250;" json:"photo_front"`
 }
 
 type PersonaType struct {

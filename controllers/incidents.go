@@ -18,7 +18,7 @@ func AllIncidents(c *gin.Context) {
 	var incidents []m.Incident
 	var count int64
 	// db = db.Where("name LIKE ?", name+"%")
-	db.Scopes(m.Pagination(page, limit)).Order("id desc").Find(&incidents)
+	db.Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Find(&incidents)
 	db.Model(m.Incident{}).Count(&count)
 	paginator := m.Paginator{
 		Limit:       limit,
@@ -31,12 +31,24 @@ func AllIncidents(c *gin.Context) {
 			c.JSON(500, gin.H{"msg": err.Error()})
 			return
 		}
+		personasCount, err := incident.GetPersonasCount()
+		if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+			c.JSON(500, gin.H{"msg": err.Error()})
+			return
+		}
+		vehiclesCount, err := incident.GetVehiclesCount()
+		if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
+			c.JSON(500, gin.H{"msg": err.Error()})
+			return
+		}
 		// user, err := incident.GetUser()
 		// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
 		// 	c.JSON(500, gin.H{"msg": err.Error()})
 		// 	return
 		// }
 		incidents[i].Location = location
+		incidents[i].PersonasCount = personasCount
+		incidents[i].VehiclesCount = vehiclesCount
 		// incidents[i].User = user
 	}
 	paginator.Records = incidents
@@ -51,19 +63,12 @@ func FindIncident(c *gin.Context) {
 		c.JSON(500, gin.H{"msg": err.Error()})
 		return
 	}
-
-	// location, err := incident.GetLocation()
-	// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
-	// 	c.JSON(500, gin.H{"msg": err.Error()})
-	// 	return
-	// }
-	// user, err := incident.GetUser()
-	// if err != nil && gorm.ErrRecordNotFound.Error() != err.Error() {
-	// 	c.JSON(500, gin.H{"msg": err.Error()})
-	// 	return
-	// }
-	// incident.Location = location
-	// incident.User = user
+	for i, p := range incident.Personas {
+		incident.Personas[i].PhotoFront = m.GetFilePathS3(p.PhotoFront)
+	}
+	for i, v := range incident.Vehicles {
+		incident.Vehicles[i].Photo = m.GetFilePathS3(v.Photo)
+	}
 	c.JSON(200, incident)
 }
 

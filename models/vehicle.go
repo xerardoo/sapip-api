@@ -14,6 +14,7 @@ type Vehicle struct {
 	Origin       string `gorm:"size:25; not null;" sql:"index" json:"origin"`
 	UseType      string `gorm:"size:25; not null;" sql:"index" json:"use_type"`
 	Observations string `gorm:"size:300; not null;" json:"observations"`
+	Photo        string `gorm:"size:250;"  json:"photo"`
 	// Fotos
 }
 

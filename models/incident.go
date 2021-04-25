@@ -1,23 +1,29 @@
 package models
 
 import (
+	"bytes"
+	"fmt"
+	"github.com/google/uuid"
+	"github.com/vincent-petithory/dataurl"
 	"gorm.io/gorm"
 )
 
 type Incident struct {
 	Model
-	Date        string       `gorm:"size:25;not null;" sql:"index" json:"date"`
-	Description string       `gorm:"size:500;index:,class:FULLTEXT" json:"description"` // full index narrativa
-	Address     string       `gorm:"size:400;not null;" sql:"index" json:"address"`
-	Area        string       `gorm:"size:25;not null;" sql:"index" json:"area"`
-	ZipCode     string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
-	Type        IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
-	TypeID      int          `gorm:"type:integer" json:"type_id"`
-	Personas    []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
-	Vehicles    []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
-	Patrols     []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
-	LocationID  int          `gorm:"type:integer" json:"location_id"`
-	Location    Location     `gorm:"foreignkey:LocationID;" json:"location"`
+	Date          string       `gorm:"size:25;not null;" sql:"index" json:"date"`
+	Description   string       `gorm:"type:text;size:500;index:,class:FULLTEXT" json:"description"` // full index narrativa
+	Address       string       `gorm:"size:400;not null;" sql:"index" json:"address"`
+	Area          string       `gorm:"size:25;not null;" sql:"index" json:"area"`
+	ZipCode       string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
+	Type          IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
+	TypeID        int          `gorm:"type:integer" json:"type_id"`
+	PersonasCount int          `gorm:"-" json:"personas_count"`
+	VehiclesCount int          `gorm:"-" json:"vehicles_count"`
+	Personas      []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
+	Vehicles      []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
+	Patrols       []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
+	LocationID    int          `gorm:"type:integer" json:"location_id"`
+	Location      Location     `gorm:"foreignkey:LocationID;" json:"location"`
 	// UserID      int          `gorm:"type:integer" json:"user_id"`
 	// User        User         `gorm:"foreignkey:UserID;" json:"user"`
 	// fotos del incidente
@@ -40,6 +46,32 @@ func InitIncidents(db *gorm.DB) {
 }
 
 func (l *Incident) Add() (*Incident, error) {
+	for i, p := range l.Personas {
+		dataURL, err := dataurl.DecodeString(p.PhotoFront)
+		if err != nil {
+			return nil, err
+		}
+		filename := fmt.Sprintf("p_"+uuid.New().String()+".%s", dataURL.Subtype)
+		err = UploadFileS3("", filename, bytes.NewReader(dataURL.Data))
+		if err != nil {
+			return nil, err
+		}
+		l.Personas[i].PhotoFront = filename
+	}
+
+	for i, v := range l.Vehicles {
+		dataURL, err := dataurl.DecodeString(v.Photo)
+		if err != nil {
+			return nil, err
+		}
+		filename := fmt.Sprintf("v_"+uuid.New().String()+".%s", dataURL.Subtype)
+		err = UploadFileS3("", filename, bytes.NewReader(dataURL.Data))
+		if err != nil {
+			return nil, err
+		}
+		l.Vehicles[i].Photo = filename
+	}
+
 	err := DB.Create(&l).Error
 	if err != nil {
 		return nil, err
@@ -90,6 +122,21 @@ func (l *Incident) GetLocation() (location Location, err error) {
 }
 func (l *Incident) GetUser() (user User, err error) {
 	err = DB.Model(&l).Association("User").Find(&user)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (i *Incident) GetPersonasCount() (count int, err error) {
+	err = DB.Raw("SELECT COUNT(*)count FROM incident_personas WHERE incident_id=?", i.ID).Scan(&count).Error
+	if err != nil {
+		return
+	}
+	return
+}
+func (i *Incident) GetVehiclesCount() (count int, err error) {
+	err = DB.Raw("SELECT COUNT(*)count FROM incident_vehicles WHERE incident_id=?", i.ID).Scan(&count).Error
 	if err != nil {
 		return
 	}
