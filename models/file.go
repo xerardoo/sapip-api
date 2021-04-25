@@ -55,6 +55,9 @@ func UploadFileS3(folder string, filename string, file io.Reader) (err error) {
 }
 
 func GetFilePathS3(filename string) (path string) {
+	if filename == "" {
+		return ""
+	}
 	bucket := os.Getenv("AWS_S3_BUCKET")
 	region := os.Getenv("AWS_S3_BUCKET_REGION")
 	path = fmt.Sprintf("https://%s.s3-%s.amazonaws.com/%s", bucket, region, filename)

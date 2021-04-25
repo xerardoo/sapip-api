@@ -44,5 +44,12 @@ func Init() *gin.Engine {
 		incidentAdmin.GET("/:id", controllers.FindIncident)
 	}
 
+	dataAdmin := r.Group("/v1/admin/data")
+	{
+		dataAdmin.POST("/geocodingr", controllers.GetGeocodingReverse)
+		dataAdmin.GET("/incident-types", controllers.AllIncidentTypes)
+		dataAdmin.GET("/persona-types", controllers.AllPersonaTypes)
+	}
+
 	return r
 }
