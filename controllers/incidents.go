@@ -46,6 +46,13 @@ func AllIncidents(c *gin.Context) {
 		// 	c.JSON(500, gin.H{"msg": err.Error()})
 		// 	return
 		// }
+		date, err := m.DateToMx(incident.Date)
+		if err != nil {
+			c.JSON(500, gin.H{"msg": err.Error()})
+			return
+		}
+
+		incidents[i].Date = date
 		incidents[i].Location = location
 		incidents[i].PersonasCount = personasCount
 		incidents[i].VehiclesCount = vehiclesCount
@@ -69,6 +76,12 @@ func FindIncident(c *gin.Context) {
 	for i, v := range incident.Vehicles {
 		incident.Vehicles[i].Photo = m.GetFilePathS3(v.Photo)
 	}
+
+	incident.Date, err = m.DateToMx(incident.Date)
+	if err != nil {
+		c.JSON(500, gin.H{"msg": err.Error()})
+	}
+
 	c.JSON(200, incident)
 }
 
@@ -79,6 +92,13 @@ func AddIncident(c *gin.Context) {
 		c.JSON(500, gin.H{"msg": err.Error()})
 		return
 	}
+
+	incident.Date, err = m.DateMxToSql(incident.Date)
+	if err != nil {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
+
 	newincident, err := incident.Add()
 	if err != nil {
 		c.JSON(500, gin.H{"msg": err.Error()})

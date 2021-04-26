@@ -1,13 +1,13 @@
 package models_test
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/xerardoo/sapip/models"
 	"testing"
 
+	"encoding/json"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/xerardoo/sapip/models"
 	_ "github.com/xerardoo/sapip/tester"
 )
 
@@ -19,9 +19,9 @@ func TestIncident(t *testing.T) {
 var _ = Describe("Incident", func() {
 
 	incident := new(models.Incident)
-	incident.Type = "rutina"
+	// incident.Type =
 	incident.Description = "se hizo alto preventivo"
-	incident.UserID = 1
+	// incident.UserID = 1
 	incident.LocationID = 1
 
 	// Add new
@@ -55,4 +55,14 @@ var _ = Describe("Incident", func() {
 	It("cant be added", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
+
+	// incident := new(models.Incident2)
+	// incident.Date = "2020-05-05"
+	// incident.Time = "13:24:45"
+	// incident.Description = "se hizo alto preventivo"
+	//
+	// err := models.DB.Create(&incident).Error
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
 })

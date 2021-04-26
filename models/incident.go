@@ -10,17 +10,18 @@ import (
 
 type Incident struct {
 	Model
-	Date          string       `gorm:"size:25;not null;" sql:"index" json:"date"`
-	Description   string       `gorm:"type:text;size:500;index:,class:FULLTEXT" json:"description"` // full index narrativa
+	Date          string       `gorm:"type:DATE NULL DEFAULT '0000-00-00';" sql:"index" json:"date"`
+	Time          string       `gorm:"type:TIME NULL DEFAULT '00:00:00';" sql:"index" json:"time"`
+	Description   string       `gorm:"type:text;index:,class:FULLTEXT" json:"description"`
 	Address       string       `gorm:"size:400;not null;" sql:"index" json:"address"`
 	Area          string       `gorm:"size:25;not null;" sql:"index" json:"area"`
 	ZipCode       string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
 	Type          IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
 	TypeID        int          `gorm:"type:integer" json:"type_id"`
 	PersonasCount int          `gorm:"-" json:"personas_count"`
+	Personas      []Persona    `gorm:"many2many:incident_personas;" json:"personas"`
 	VehiclesCount int          `gorm:"-" json:"vehicles_count"`
-	Personas      []Persona    `gorm:"many2many:incident_personas;" json:"personas"` // involucrados
-	Vehicles      []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"` //
+	Vehicles      []Vehicle    `gorm:"many2many:incident_vehicles;" json:"vehicles"`
 	Patrols       []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
 	LocationID    int          `gorm:"type:integer" json:"location_id"`
 	Location      Location     `gorm:"foreignkey:LocationID;" json:"location"`
@@ -47,27 +48,33 @@ func InitIncidents(db *gorm.DB) {
 
 func (l *Incident) Add() (*Incident, error) {
 	for i, p := range l.Personas {
+		if p.PhotoFront == "" {
+			break
+		}
 		dataURL, err := dataurl.DecodeString(p.PhotoFront)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("DecodeString:p %s", err.Error())
 		}
 		filename := fmt.Sprintf("p_"+uuid.New().String()+".%s", dataURL.Subtype)
 		err = UploadFileS3("", filename, bytes.NewReader(dataURL.Data))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("UploadFileS3:p %s", err.Error())
 		}
 		l.Personas[i].PhotoFront = filename
 	}
 
 	for i, v := range l.Vehicles {
+		if v.Photo == "" {
+			break
+		}
 		dataURL, err := dataurl.DecodeString(v.Photo)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("DecodeString:v %s", err.Error())
 		}
 		filename := fmt.Sprintf("v_"+uuid.New().String()+".%s", dataURL.Subtype)
 		err = UploadFileS3("", filename, bytes.NewReader(dataURL.Data))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("UploadFileS3:v %s", err.Error())
 		}
 		l.Vehicles[i].Photo = filename
 	}

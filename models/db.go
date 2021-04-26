@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"os"
 	"strings"
+	"time"
 )
 
 var DB *gorm.DB
@@ -83,5 +84,30 @@ func UseDB(db *gorm.DB, database string) (err error) {
 	if err != nil {
 		return
 	}
+	return
+}
+
+func DateToMx(date string) (dt string, err error) {
+	if date == "" {
+		return
+	}
+	d := strings.Split(date, "T")
+	tm, err := time.Parse("2006-01-02", d[0])
+	if err != nil {
+		return
+	}
+	dt = tm.Format("02-01-2006")
+	return
+}
+
+func DateMxToSql(date string) (dt string, err error) {
+	if date == "" {
+		return
+	}
+	tm, err := time.Parse("02-01-2006", date)
+	if err != nil {
+		return
+	}
+	dt = tm.Format("2006-01-02")
 	return
 }
