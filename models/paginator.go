@@ -26,7 +26,6 @@ func Pagination(page, limit int) func(db *gorm.DB) *gorm.DB {
 		case limit <= 0:
 			limit = 10
 		}
-
 		offset := (page - 1) * limit
 		return db.Offset(offset).Limit(limit)
 	}

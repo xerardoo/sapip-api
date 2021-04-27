@@ -11,14 +11,34 @@ func AllIncidents(c *gin.Context) {
 	db := m.DB
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
-	// name := c.DefaultQuery("name", "")
+	search := c.DefaultQuery("search", "")
+	end := c.DefaultQuery("end", "")
+	start := c.DefaultQuery("start", "")
+
 	// sortBy := c.DefaultQuery("sortBy", "id")
 	// order := c.DefaultQuery("order", "desc")
 
 	var incidents []m.Incident
 	var count int64
-	// db = db.Where("name LIKE ?", name+"%")
-	db.Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Find(&incidents)
+
+	if search != "" {
+		db = db.Where("MATCH(description) AGAINST (? IN NATURAL LANGUAGE MODE)", search)
+	}
+	if start != "" && end != "" {
+		start, err := m.DateMxToSql(start)
+		if err != nil {
+			c.JSON(500, gin.H{"msg": err.Error()})
+			return
+		}
+		end, err := m.DateMxToSql(end)
+		if err != nil {
+			c.JSON(500, gin.H{"msg": err.Error()})
+			return
+		}
+		db = db.Where("date BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)", start, end)
+	}
+
+	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Find(&incidents)
 	db.Model(m.Incident{}).Count(&count)
 	paginator := m.Paginator{
 		Limit:       limit,
