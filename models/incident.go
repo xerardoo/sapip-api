@@ -10,7 +10,7 @@ import (
 
 type Incident struct {
 	Model
-	Date          string       `gorm:"type:DATETIME NULL;" sql:"index" json:"date"`
+	Date string `gorm:"type:DATETIME NULL;" sql:"index" json:"date"`
 	// Time          string       `gorm:"type:TIME NULL DEFAULT '00:00:00';" sql:"index" json:"time"`
 	Description   string       `gorm:"type:text;index:,class:FULLTEXT" json:"description"`
 	Address       string       `gorm:"size:400;not null;" sql:"index" json:"address"`
@@ -32,7 +32,8 @@ type Incident struct {
 
 type IncidentType struct {
 	Model
-	Name string `gorm:"size:250;not null;" sql:"index" json:"name"`
+	Name  string `gorm:"size:250;not null;" sql:"index" json:"name"`
+	Color string `gorm:"size:50;not null;" json:"color"`
 }
 
 // tipo de evento  homicidio, persona lesionada, robo con violencia a comercio, robo con violencia a persona,
