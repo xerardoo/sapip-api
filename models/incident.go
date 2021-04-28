@@ -10,8 +10,8 @@ import (
 
 type Incident struct {
 	Model
-	Date          string       `gorm:"type:DATE NULL DEFAULT '0000-00-00';" sql:"index" json:"date"`
-	Time          string       `gorm:"type:TIME NULL DEFAULT '00:00:00';" sql:"index" json:"time"`
+	Date          string       `gorm:"type:DATETIME NULL;" sql:"index" json:"date"`
+	// Time          string       `gorm:"type:TIME NULL DEFAULT '00:00:00';" sql:"index" json:"time"`
 	Description   string       `gorm:"type:text;index:,class:FULLTEXT" json:"description"`
 	Address       string       `gorm:"size:400;not null;" sql:"index" json:"address"`
 	Area          string       `gorm:"size:25;not null;" sql:"index" json:"area"`

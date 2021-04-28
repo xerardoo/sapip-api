@@ -14,6 +14,9 @@ func AllIncidents(c *gin.Context) {
 	search := c.DefaultQuery("search", "")
 	end := c.DefaultQuery("end", "")
 	start := c.DefaultQuery("start", "")
+	user := c.DefaultQuery("user", "")
+	typee := c.DefaultQuery("type", "")
+	cp := c.DefaultQuery("cp", "")
 
 	// sortBy := c.DefaultQuery("sortBy", "id")
 	// order := c.DefaultQuery("order", "desc")
@@ -24,18 +27,17 @@ func AllIncidents(c *gin.Context) {
 	if search != "" {
 		db = db.Where("MATCH(description) AGAINST (? IN NATURAL LANGUAGE MODE)", search)
 	}
+	if user != "" {
+		db = db.Where("user_id=?", user)
+	}
+	if typee != "" {
+		db = db.Where("type_id=?", typee)
+	}
+	if cp != "" {
+		db = db.Where("zip_code=?", cp)
+	}
 	if start != "" && end != "" {
-		start, err := m.DateMxToSql(start)
-		if err != nil {
-			c.JSON(500, gin.H{"msg": err.Error()})
-			return
-		}
-		end, err := m.DateMxToSql(end)
-		if err != nil {
-			c.JSON(500, gin.H{"msg": err.Error()})
-			return
-		}
-		db = db.Where("date BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)", start, end)
+		db = db.Where("date BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", start, end)
 	}
 
 	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Find(&incidents)
@@ -66,13 +68,13 @@ func AllIncidents(c *gin.Context) {
 		// 	c.JSON(500, gin.H{"msg": err.Error()})
 		// 	return
 		// }
-		date, err := m.DateToMx(incident.Date)
-		if err != nil {
-			c.JSON(500, gin.H{"msg": err.Error()})
-			return
-		}
+		// date, err := m.DateToMx(incident.Date)
+		// if err != nil {
+		// 	c.JSON(500, gin.H{"msg": err.Error()})
+		// 	return
+		// }
 
-		incidents[i].Date = date
+		// incidents[i].Date = date
 		incidents[i].Location = location
 		incidents[i].PersonasCount = personasCount
 		incidents[i].VehiclesCount = vehiclesCount
@@ -97,10 +99,10 @@ func FindIncident(c *gin.Context) {
 		incident.Vehicles[i].Photo = m.GetFilePathS3(v.Photo)
 	}
 
-	incident.Date, err = m.DateToMx(incident.Date)
-	if err != nil {
-		c.JSON(500, gin.H{"msg": err.Error()})
-	}
+	// incident.Date, err = m.DateToMx(incident.Date)
+	// if err != nil {
+	// 	c.JSON(500, gin.H{"msg": err.Error()})
+	// }
 
 	c.JSON(200, incident)
 }
@@ -113,11 +115,11 @@ func AddIncident(c *gin.Context) {
 		return
 	}
 
-	incident.Date, err = m.DateMxToSql(incident.Date)
-	if err != nil {
-		c.JSON(500, gin.H{"msg": err.Error()})
-		return
-	}
+	// incident.Date, err = m.DateMxToSql(incident.Date)
+	// if err != nil {
+	// 	c.JSON(500, gin.H{"msg": err.Error()})
+	// 	return
+	// }
 
 	newincident, err := incident.Add()
 	if err != nil {
