@@ -60,6 +60,7 @@ func InitDB() (db *gorm.DB) {
 
 	InitIncidents(db)
 	InitPersona(db)
+	InitUser(db)
 	return
 }
 

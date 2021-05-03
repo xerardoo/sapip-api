@@ -28,6 +28,7 @@ func Init() *gin.Engine {
 		data.GET("/incident-types", controllers.AllIncidentTypes)
 		data.GET("/persona-types", controllers.AllPersonaTypes)
 	}
+	data.Use(VerifyJWT())
 
 	incident := r.Group("/v1/incident")
 	{
@@ -37,11 +38,21 @@ func Init() *gin.Engine {
 		// incident.PUT("/:id", controllers.UpdIncident)
 		// incident.DELETE("/:id", controllers.DelIncident)
 	}
+	incident.Use(VerifyJWT())
 
 	incidentAdmin := r.Group("/v1/admin/incident")
 	{
 		incidentAdmin.GET("", controllers.AllIncidents)
 		incidentAdmin.GET("/:id", controllers.FindIncident)
+	}
+
+	userAdmin := r.Group("/v1/admin/user")
+	{
+		userAdmin.GET("", controllers.AllUsers)
+		userAdmin.POST("", controllers.AddUser)
+		userAdmin.GET("/:id", controllers.FindUser)
+		userAdmin.PUT("/:id", controllers.UpdUser)
+		userAdmin.DELETE("/:id", controllers.DelUser)
 	}
 
 	dataAdmin := r.Group("/v1/admin/data")
