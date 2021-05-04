@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xerardoo/sapip/controllers"
+	"time"
 )
 
 func Init() *gin.Engine {
@@ -10,17 +11,16 @@ func Init() *gin.Engine {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
 
-	// auth := r.Group("/v1")
-	// {
-	// 	auth.Any("/signin", controllers.Signin)
-	// 	auth.Any("/logout", controllers.Logout)
-	// 	auth.GET("/hello", func(c *gin.Context) {
-	// 		c.JSON(200, gin.H{
-	// 			"time": time.Now(),
-	// 			"utc":  time.UTC.String(),
-	// 		})
-	// 	})
-	// }
+	auth := r.Group("/v1")
+	{
+		auth.POST("/signin", controllers.Signin)
+		auth.GET("/hello", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"time": time.Now(),
+				"utc":  time.UTC.String(),
+			})
+		})
+	}
 
 	data := r.Group("/v1/data")
 	{
