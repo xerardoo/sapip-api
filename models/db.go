@@ -52,6 +52,7 @@ func InitDB() (db *gorm.DB) {
 		&Vehicle{},
 		&Location{},
 		&Incident{},
+		&AuditLogIncident{},
 	)
 	if err != nil {
 		fmt.Println("DB Migration: ", err.Error())
@@ -105,10 +106,10 @@ func DateMxToSql(date string) (dt string, err error) {
 	if date == "" {
 		return
 	}
-	tm, err := time.Parse("02-01-2006", date)
+	tm, err := time.Parse("02-01-2006 15:04:05", date)
 	if err != nil {
 		return
 	}
-	dt = tm.Format("2006-01-02")
+	dt = tm.Format("2006-01-02 15:04:05")
 	return
 }

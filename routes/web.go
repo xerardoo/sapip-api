@@ -22,15 +22,25 @@ func Init() *gin.Engine {
 		})
 	}
 
-	data := r.Group("/v1/data")
+	authAdmin := r.Group("/v1/admin")
+	{
+		authAdmin.POST("/signin", controllers.SigninAdmin)
+		authAdmin.GET("/hello", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"time": time.Now(),
+				"utc":  time.UTC.String(),
+			})
+		})
+	}
+
+	data := r.Group("/v1/data").Use(VerifyJWT())
 	{
 		data.POST("/geocodingr", controllers.GetGeocodingReverse)
 		data.GET("/incident-types", controllers.AllIncidentTypes)
 		data.GET("/persona-types", controllers.AllPersonaTypes)
 	}
-	data.Use(VerifyJWT())
 
-	incident := r.Group("/v1/incident")
+	incident := r.Group("/v1/incident").Use(VerifyJWT())
 	{
 		incident.GET("", controllers.AllIncidents)
 		incident.GET("/:id", controllers.FindIncident)
@@ -38,15 +48,14 @@ func Init() *gin.Engine {
 		// incident.PUT("/:id", controllers.UpdIncident)
 		// incident.DELETE("/:id", controllers.DelIncident)
 	}
-	incident.Use(VerifyJWT())
 
-	incidentAdmin := r.Group("/v1/admin/incident")
+	incidentAdmin := r.Group("/v1/admin/incident").Use(VerifyJWT())
 	{
 		incidentAdmin.GET("", controllers.AllIncidents)
 		incidentAdmin.GET("/:id", controllers.FindIncident)
 	}
 
-	userAdmin := r.Group("/v1/admin/user")
+	userAdmin := r.Group("/v1/admin/user").Use(VerifyJWT())
 	{
 		userAdmin.GET("", controllers.AllUsers)
 		userAdmin.POST("", controllers.AddUser)
@@ -55,11 +64,16 @@ func Init() *gin.Engine {
 		userAdmin.DELETE("/:id", controllers.DelUser)
 	}
 
-	dataAdmin := r.Group("/v1/admin/data")
+	dataAdmin := r.Group("/v1/admin/data").Use(VerifyJWT())
 	{
 		dataAdmin.POST("/geocodingr", controllers.GetGeocodingReverse)
 		dataAdmin.GET("/incident-types", controllers.AllIncidentTypes)
 		dataAdmin.GET("/persona-types", controllers.AllPersonaTypes)
+	}
+
+	auditLog := r.Group("/v1/admin/audit-log").Use(VerifyJWT())
+	{
+		auditLog.GET("/incident", controllers.AllIncidentsLog)
 	}
 
 	return r

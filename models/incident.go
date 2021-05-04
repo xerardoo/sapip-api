@@ -25,8 +25,8 @@ type Incident struct {
 	Patrols       []Patrol     `gorm:"many2many:incident_patrols;" json:"patrols"`
 	LocationID    int          `gorm:"type:integer" json:"location_id"`
 	Location      Location     `gorm:"foreignkey:LocationID;" json:"location"`
-	// UserID      int          `gorm:"type:integer" json:"user_id"`
-	// User        User         `gorm:"foreignkey:UserID;" json:"user"`
+	UserID        int          `gorm:"type:integer" json:"user_id"`
+	User          User         `gorm:"foreignkey:UserID;" json:"user"`
 	// fotos del incidente
 }
 
@@ -88,7 +88,7 @@ func (l *Incident) Add() (*Incident, error) {
 }
 
 func (l *Incident) Find(id int) (err error) {
-	err = DB.Preload("Location").Preload("Type").
+	err = DB.Preload("Location").Preload("Type").Preload("User").
 		Preload("Personas.Type").Preload("Vehicles").First(&l, id).Error
 	if err != nil {
 		return

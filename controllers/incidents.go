@@ -86,6 +86,10 @@ func AllIncidents(c *gin.Context) {
 
 func FindIncident(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
+	userData, _ := c.Get("USER")
+	user := userData.(*m.User)
+	ua := c.Request.Header.Get("User-Agent")
+
 	var incident m.Incident
 	err := incident.Find(id)
 	if err != nil {
@@ -99,28 +103,32 @@ func FindIncident(c *gin.Context) {
 		incident.Vehicles[i].Photo = m.GetFilePathS3(v.Photo)
 	}
 
-	// incident.Date, err = m.DateToMx(incident.Date)
-	// if err != nil {
-	// 	c.JSON(500, gin.H{"msg": err.Error()})
-	// }
-
+	audit := m.AuditLogIncident{Action: m.AUDIT_INCIDENT_VISIT, UserAgent: ua, IncidentID: incident.ID, UserID: user.ID}
+	_, err = audit.Add()
+	if err != nil {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
 	c.JSON(200, incident)
 }
 
 func AddIncident(c *gin.Context) {
 	var incident m.Incident
+	userData, _ := c.Get("USER")
+	user := userData.(*m.User)
+
 	err := c.BindJSON(&incident)
 	if err != nil {
 		c.JSON(500, gin.H{"msg": err.Error()})
 		return
 	}
 
-	// incident.Date, err = m.DateMxToSql(incident.Date)
-	// if err != nil {
-	// 	c.JSON(500, gin.H{"msg": err.Error()})
-	// 	return
-	// }
-
+	incident.Date, err = m.DateMxToSql(incident.Date)
+	if err != nil {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
+	incident.UserID = user.ID
 	newincident, err := incident.Add()
 	if err != nil {
 		c.JSON(500, gin.H{"msg": err.Error()})
