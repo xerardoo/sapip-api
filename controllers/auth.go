@@ -27,7 +27,7 @@ func Signin(c *gin.Context) {
 
 	user, err = user.VerifyCredentials(creds.Username, creds.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+		c.JSON(400, gin.H{"msg": "credenciales invalidas"})
 		return
 	}
 
@@ -61,7 +61,7 @@ func SigninAdmin(c *gin.Context) {
 
 	user, err = user.VerifyCredentials(creds.Username, creds.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"msg": err.Error()})
+		c.JSON(400, gin.H{"msg": "credenciales invalidas"})
 		return
 	}
 

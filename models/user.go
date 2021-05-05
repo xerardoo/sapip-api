@@ -80,7 +80,7 @@ func (u *User) Remove() (err error) {
 
 func (u *User) VerifyCredentials(user string, password string) (pu *User, err error) {
 	hashPassword := md5.Sum([]byte(password))
-	err = DB.Where("badge_number=? AND password=?", user, hex.EncodeToString(hashPassword[:])).Find(&u).Error
+	err = DB.First(&u,"badge_number=? AND password=?", user, hex.EncodeToString(hashPassword[:])).Error
 	if err != nil {
 		return
 	}

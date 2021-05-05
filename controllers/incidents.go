@@ -40,7 +40,7 @@ func AllIncidents(c *gin.Context) {
 		db = db.Where("date BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", start, end)
 	}
 
-	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Find(&incidents)
+	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Preload("Type").Preload("User").Find(&incidents)
 	db.Model(m.Incident{}).Count(&count)
 	paginator := m.Paginator{
 		Limit:       limit,
@@ -80,6 +80,9 @@ func AllIncidents(c *gin.Context) {
 		incidents[i].VehiclesCount = vehiclesCount
 		// incidents[i].User = user
 	}
+	// if len(incidents)==0{
+	// 	incidents = []
+	// }
 	paginator.Records = incidents
 	c.JSON(200, paginator)
 }

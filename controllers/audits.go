@@ -10,22 +10,23 @@ func AllIncidentsLog(c *gin.Context) {
 	db := m.DB
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
-	search := c.DefaultQuery("search", "")
+
 	end := c.DefaultQuery("end", "")
 	start := c.DefaultQuery("start", "")
 	user := c.DefaultQuery("user", "")
+	incident := c.DefaultQuery("incident", "")
 
 	var incidents []m.AuditLogIncident
 	var count int64
 
-	if search != "" {
-		db = db.Where("LIKE %?", search)
-	}
 	if user != "" {
 		db = db.Where("user_id=?", user)
 	}
+	if incident != "" {
+		db = db.Where("incident_id=?", incident)
+	}
 	if start != "" && end != "" {
-		db = db.Where("date BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", start, end)
+		db = db.Where("created_at BETWEEN CAST(? AS DATETIME) AND CAST(? AS DATETIME)", start, end)
 	}
 
 	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Preload("User").Preload("Location").Find(&incidents)
