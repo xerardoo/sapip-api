@@ -8,11 +8,14 @@ type AuditLogIncident struct {
 	Incident   Incident `gorm:"foreignkey:IncidentID;" json:"incident"`
 	UserID     int      `gorm:"type:integer" json:"user_id"`
 	User       User     `gorm:"foreignkey:UserID;" json:"user"`
-	LocationID *int      `gorm:"type:integer" json:"location_id"`
+	LocationID *int     `gorm:"type:integer" json:"location_id"`
 	Location   Location `gorm:"foreignkey:LocationID;" json:"location"`
 }
 
-const AUDIT_INCIDENT_VISIT = "Visualización  de Incidente"
+const (
+	AUDIT_INCIDENT_VISIT = "Visualización de Incidente"
+	AUDIT_INCIDENT_COPY  = "Copia de Información de Incidente"
+)
 
 func (a *AuditLogIncident) Add() (*AuditLogIncident, error) {
 	err := DB.Create(&a).Error

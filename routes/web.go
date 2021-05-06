@@ -40,6 +40,11 @@ func Init() *gin.Engine {
 		data.GET("/persona-types", controllers.AllPersonaTypes)
 	}
 
+	meta := r.Group("/v1/meta").Use(VerifyJWT())
+	{
+		meta.POST("/session/:id", controllers.AddAuditEvent)
+	}
+
 	incident := r.Group("/v1/incident").Use(VerifyJWT())
 	{
 		incident.GET("", controllers.AllIncidents)

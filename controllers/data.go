@@ -6,6 +6,7 @@ import (
 	m "github.com/xerardoo/sapip/models"
 	"googlemaps.github.io/maps"
 	"os"
+	"strconv"
 )
 
 func GetGeocodingReverse(c *gin.Context) {
@@ -40,4 +41,19 @@ func AllPersonaTypes(c *gin.Context) {
 	var personas []m.PersonaType
 	m.DB.Order("name desc").Find(&personas)
 	c.JSON(200, personas)
+}
+
+func AddAuditEvent(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	userData, _ := c.Get("USER")
+	user := userData.(*m.User)
+	ua := c.Request.Header.Get("User-Agent")
+
+	audit := m.AuditLogIncident{Action: m.AUDIT_INCIDENT_COPY, UserAgent: ua, IncidentID: id, UserID: user.ID}
+	_, err := audit.Add()
+	if err != nil {
+		c.JSON(500, gin.H{"msg": err.Error()})
+		return
+	}
+	c.Status(200)
 }
