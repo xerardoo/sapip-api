@@ -16,6 +16,7 @@ type Incident struct {
 	Address       string       `gorm:"size:400;not null;" sql:"index" json:"address"`
 	Area          string       `gorm:"size:25;not null;" sql:"index" json:"area"`
 	ZipCode       string       `gorm:"size:25;not null;" sql:"index" json:"zipcode"`
+	PatrolNumber  string       `gorm:"size:25;not null;" sql:"index" json:"patrol_number"`
 	Type          IncidentType `gorm:"foreignkey:TypeID;" json:"type"`
 	TypeID        int          `gorm:"type:integer" json:"type_id"`
 	PersonasCount int          `gorm:"-" json:"personas_count"`

@@ -19,7 +19,7 @@ func AllUsers(c *gin.Context) {
 	var count int64
 
 	if search != "" {
-		db = db.Where("", search)
+		db = db.Where("CONCAT(first_name,' ',last_name) LIKE ?", "%"+search+"%")
 	}
 
 	db.Debug().Scopes(m.Pagination(page, limit)).Order("id desc").Find(&users)
